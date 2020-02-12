@@ -1,18 +1,13 @@
 package mule.graph;
 
-import mule.graph.interpreter.GraphAnalyzer;
+import mule.graph.interpreter.RouteAnalizer;
+import mule.graph.interpreter.ShortPathAnalyzer;
 import mule.graph.model.IGraph;
 import mule.graph.model.Node;
 
 public class GraphFacade {
 	public int getRouteDistance (IGraph g, Node... route) {
-		GraphAnalyzer ga = new GraphAnalyzer();
-		ga.compile(g, route[0]);
-		int distance = 0;
-		for (Node node : route) {
-			distance += ga.getDistancesTo(node);
-		}
-		return distance;
+		return new RouteAnalizer().compile(g).getRouteDistance(route);
 	}
 
 	public int getNumberOfTripsWithMaxStops (IGraph g, Node from, Node to, int maxStops) {
@@ -24,7 +19,7 @@ public class GraphFacade {
 	}
 
 	public int getShortestRouteLength (IGraph g, Node from, Node to) {
-		GraphAnalyzer ga = new GraphAnalyzer();
+		ShortPathAnalyzer ga = new ShortPathAnalyzer();
 		ga.compile(g, from);
 		return ga.getDistancesTo(to);
 	}

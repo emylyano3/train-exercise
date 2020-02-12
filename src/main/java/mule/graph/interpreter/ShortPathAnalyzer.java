@@ -9,14 +9,14 @@ import mule.graph.model.Edge;
 import mule.graph.model.IGraph;
 import mule.graph.model.Node;
 
-public class GraphAnalyzer {
+public class ShortPathAnalyzer {
 
 	// Usaremos un vector para guardar las distancias del nodo salida al resto
 	private Map<Node, Integer>	distances	= new HashMap<>();
 	// vector de boleanos para controlar los vértices de los que ya tenemos la distancia mínima
 	private Set<Node>			checked		= new HashSet<>();
 
-	public GraphAnalyzer compile (IGraph g, Node source) {
+	public ShortPathAnalyzer compile (IGraph g, Node source) {
 		for (Node node : g.getNodes()) {
 			Edge r;
 			if ((r = getNodesRelation(g, source, node)) != null) {
