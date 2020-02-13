@@ -23,29 +23,38 @@ public class GraphLoader implements IGraphLoader {
 	private static final String	EDGE_SPLITTER	= ",";
 	private static final String	GRAPH_SPLITTER	= ";";
 
-	private Map<String, Node>	nodes = new HashMap<String, Node>();
+	private Map<String, Node>	nodes			= new HashMap<String, Node>();
 
 	@Override
 	public IGraph loadGraph (File graphFile) {
 		try (InputStream is = new FileInputStream(graphFile)) {
 			byte[] bytes = new byte[is.available()];
 			is.read(bytes);
-			String graphDesc = new String(bytes);
-			String[] edges = graphDesc.trim().split(GRAPH_SPLITTER);
-			Graph g = new Graph();
-			for (String edge : edges) {
-				String[] parts = edge.trim().split(EDGE_SPLITTER);
-				if (parts.length < 3) {
-					throw new RuntimeException(
-						String.format("Invalid graph data in file %s. Edge bad formatted %s", graphFile.getPath(), Arrays.toString(parts)));
-				}
-				g.addEdge(buildEdge(parts));
-			}
-			g.setNodes(new HashSet<>(this.nodes.values()));
-			return g;
+			return loadGraph(bytes);
 		} catch (IOException e) {
 			throw new RuntimeException(String.format("File %s could not be loaded.", graphFile.getPath()), e);
 		}
+	}
+
+	@Override
+	public IGraph loadGraph (String graphDesc) {
+		String[] edges = graphDesc.trim().split(GRAPH_SPLITTER);
+		Graph g = new Graph();
+		for (String edge : edges) {
+			String[] parts = edge.trim().split(EDGE_SPLITTER);
+			if (parts.length < 3) {
+				throw new RuntimeException(
+					String.format("Invalid graph data. Edge bad formatted %s", Arrays.toString(parts)));
+			}
+			g.addEdge(buildEdge(parts));
+		}
+		g.setNodes(new HashSet<>(this.nodes.values()));
+		return g;
+	}
+
+	@Override
+	public IGraph loadGraph (byte[] bytes) {
+		return loadGraph(new String(bytes));
 	}
 
 	private Edge buildEdge (String[] parts) {
