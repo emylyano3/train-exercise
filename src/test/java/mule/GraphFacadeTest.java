@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import mule.graph.GraphFacade;
-import mule.graph.NoSuchRouteException;
+import mule.graph.exception.NoSuchRouteException;
 import mule.graph.loader.GraphLoader;
 import mule.graph.model.IGraph;
 

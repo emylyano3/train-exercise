@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import mule.graph.NoSuchRouteException;
+import mule.graph.exception.NoSuchRouteException;
 import mule.graph.model.Edge;
 import mule.graph.model.IGraph;
 import mule.graph.model.Node;
