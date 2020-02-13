@@ -21,8 +21,10 @@ import java.util.Set;
  *
  */
 public class Graph implements IGraph {
-	private Set<Edge>		edges;
-	private Set<Node>		nodes;
+	private static final long	serialVersionUID	= 1L;
+
+	private Set<Edge>			edges;
+	private Set<Node>			nodes;
 
 	public Graph () {
 		super();
@@ -35,7 +37,7 @@ public class Graph implements IGraph {
 	}
 
 	@Override
-	public Set<Edge> getEdges (Node n) {
+	public Set<Edge> getEdges (INode n) {
 		Set<Edge> result = new HashSet<>();
 		for (Edge e : this.edges) {
 			if (e.getFrom().equals(n)) {
@@ -61,8 +63,8 @@ public class Graph implements IGraph {
 	}
 
 	@Override
-	public Node getNode (String name) {
-		for (Node n : this.nodes) {
+	public INode getNode (String name) {
+		for (INode n : this.nodes) {
 			if (n.getName().equals(name)) {
 				return n;
 			}

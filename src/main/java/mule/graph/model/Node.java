@@ -1,17 +1,21 @@
 package mule.graph.model;
 
-public class Node {
-	private String name;
+public class Node implements INode {
+	private static final long	serialVersionUID	= 1L;
+
+	private String				name;
 
 	public Node (String name) {
 		super();
 		this.name = name;
 	}
 
+	@Override
 	public String getName () {
 		return this.name;
 	}
 
+	@Override
 	public void setName (String name) {
 		this.name = name;
 	}

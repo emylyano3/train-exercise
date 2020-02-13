@@ -7,6 +7,7 @@ import java.util.Map;
 import mule.graph.exception.NoSuchRouteException;
 import mule.graph.model.Edge;
 import mule.graph.model.IGraph;
+import mule.graph.model.INode;
 import mule.graph.model.Node;
 
 public class RouteAnalyzer {
@@ -18,7 +19,7 @@ public class RouteAnalyzer {
 		return this;
 	}
 
-	public int getRouteDistance (Node... route) {
+	public int getRouteDistance (INode... route) {
 		int distance = 0;
 		for (int i = 0; i < route.length - 1; ++i) {
 			if (this.matrix.get(route[i]).get(route[i + 1]) == -1) {
@@ -46,11 +47,11 @@ public class RouteAnalyzer {
 		}
 	}
 
-	public int getRouteAlternatives (IGraph g, Node from, Node to, int limit, AccumType accumType, ControlType controlType) {
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, AccumType accumType, ControlType controlType) {
 		return find(g, from, to, 0, 0, limit, accumType, controlType);
 	}
 
-	private int find (IGraph g, Node n, Node toFind, int matches, int current, int limit, AccumType accumType, ControlType controlType) {
+	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, AccumType accumType, ControlType controlType) {
 		CutControl ct = getCutControl(controlType);
 		if (current <= limit) {
 			for (Edge e : g.getEdges(n)) {

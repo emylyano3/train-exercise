@@ -7,17 +7,17 @@ import java.util.Set;
 
 import mule.graph.model.Edge;
 import mule.graph.model.IGraph;
-import mule.graph.model.Node;
+import mule.graph.model.INode;
 
 public class ShortPathAnalyzer {
 
 	// Usaremos un vector para guardar las distancias del nodo salida al resto
-	private Map<Node, Integer>	distances	= new HashMap<>();
+	private Map<INode, Integer>	distances	= new HashMap<>();
 	// vector de boleanos para controlar los vértices de los que ya tenemos la distancia mínima
-	private Set<Node>			checked		= new HashSet<>();
+	private Set<INode>			checked		= new HashSet<>();
 
-	public ShortPathAnalyzer compile (IGraph g, Node source) {
-		for (Node node : g.getNodes()) {
+	public ShortPathAnalyzer compile (IGraph g, INode source) {
+		for (INode node : g.getNodes()) {
 			Edge r;
 			if ((r = getNodesRelation(g, source, node)) != null) {
 				this.distances.put(node, r.getWeigth());
@@ -27,7 +27,7 @@ public class ShortPathAnalyzer {
 		}
 		this.checked.add(source);
 		while (this.checked.size() < g.getNodes().size()) {
-			Node v = getNextNode();
+			INode v = getNextNode();
 			for (Edge e : g.getEdges(v)) {
 				this.distances.put(e.getTo(), getShortestDistance(e));
 			}
@@ -40,13 +40,13 @@ public class ShortPathAnalyzer {
 		if (this.distances.get(e.getTo()) == -1 && this.distances.get(e.getFrom()) == -1) {
 			return -1;
 		} else if (this.distances.get(e.getTo()) == -1) {
-			return this.distances.get(e.getFrom())  + e.getWeigth();
+			return this.distances.get(e.getFrom()) + e.getWeigth();
 		} else {
 			return this.distances.get(e.getTo());
 		}
 	}
 
-	private Edge getNodesRelation (IGraph g, Node from, Node to) {
+	private Edge getNodesRelation (IGraph g, INode from, INode to) {
 		for (Edge e : g.getEdges(from)) {
 			if (e.getTo().equals(to)) {
 				return e;
@@ -58,8 +58,8 @@ public class ShortPathAnalyzer {
 	/**
 	 * @returns the first node from the distance check map that has not been checked
 	 */
-	private Node getNextNode () {
-		for (Node n : this.distances.keySet()) {
+	private INode getNextNode () {
+		for (INode n : this.distances.keySet()) {
 			if (!this.checked.contains(n)) {
 				return n;
 			}
@@ -67,11 +67,11 @@ public class ShortPathAnalyzer {
 		return null;
 	}
 
-	public Map<Node, Integer> getDistances () {
+	public Map<INode, Integer> getDistances () {
 		return this.distances;
 	}
 
-	public Integer getDistancesTo (Node n) {
+	public Integer getDistancesTo (INode n) {
 		return this.distances.get(n) != null ? this.distances.get(n) : -1;
 	}
 

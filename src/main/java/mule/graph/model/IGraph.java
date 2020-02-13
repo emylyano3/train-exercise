@@ -1,18 +1,19 @@
 package mule.graph.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public interface IGraph {
+public interface IGraph extends Serializable {
 
 	Set<Edge> getEdges ();
 
-	Set<Edge> getEdges (Node n);
+	Set<Edge> getEdges (INode n);
 
 	void setEdges (Set<Edge> edges);
 
 	void addEdge (Edge edge);
 
-	Node getNode (String name);
+	INode getNode (String name);
 
 	Set<Node> getNodes ();
 

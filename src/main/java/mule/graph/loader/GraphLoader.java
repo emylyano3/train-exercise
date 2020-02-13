@@ -12,6 +12,7 @@ import java.util.Map;
 import mule.graph.model.Edge;
 import mule.graph.model.Graph;
 import mule.graph.model.IGraph;
+import mule.graph.model.INode;
 import mule.graph.model.Node;
 
 public class GraphLoader implements IGraphLoader {
@@ -51,7 +52,7 @@ public class GraphLoader implements IGraphLoader {
 		return new Edge(buildNode(parts[FROM_INDEX]), new Node(parts[TO_INDEX]), Integer.parseInt(parts[WEIGTH_INDEX]));
 	}
 
-	private Node buildNode (String name) {
+	private INode buildNode (String name) {
 		if (!this.nodes.containsKey(name)) {
 			this.nodes.put(name, new Node(name));
 		}

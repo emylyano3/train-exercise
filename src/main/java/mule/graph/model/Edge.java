@@ -1,22 +1,22 @@
 package mule.graph.model;
 
 public class Edge {
-	private Node	from;
+	private INode	from;
 	private Node	to;
 	private int		weigth;
 
-	public Edge (Node from, Node to, int weigth) {
+	public Edge (INode from, Node to, int weigth) {
 		super();
 		this.from = from;
 		this.to = to;
 		this.weigth = weigth;
 	}
 
-	public Node getFrom () {
+	public INode getFrom () {
 		return this.from;
 	}
 
-	public void setFrom (Node from) {
+	public void setFrom (INode from) {
 		this.from = from;
 	}
 
