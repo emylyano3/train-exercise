@@ -1,4 +1,4 @@
-package mule.graph.interpreter;
+package mule.graph.analyzer;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import mule.graph.model.Edge;
 import mule.graph.model.IGraph;
 import mule.graph.model.Node;
 
-public class RouteAnalizer {
+public class RouteAnalyzer {
 	private Map<Node, Map<Node, Integer>> matrix;
 
-	public RouteAnalizer compile (IGraph g) {
+	public RouteAnalyzer compile (IGraph g) {
 		init(g);
 		fill(g);
 		return this;
@@ -46,34 +46,33 @@ public class RouteAnalizer {
 		}
 	}
 
-	public int getRouteAlternatives (IGraph g, Node from, Node to, int cutControl, ControlType controlType) {
-		return find(g, from, to, 0, 0, cutControl, controlType);
+	public int getRouteAlternatives (IGraph g, Node from, Node to, int limit, AccumType accumType, ControlType controlType) {
+		return find(g, from, to, 0, 0, limit, accumType, controlType);
 	}
 
-	private int find (IGraph g, Node n, Node toFind, int matches, int current, int stops, ControlType controlType) {
+	private int find (IGraph g, Node n, Node toFind, int matches, int current, int limit, AccumType accumType, ControlType controlType) {
 		MatchControl ct = getCutControl(controlType);
 		for (Edge e : g.getEdges(n)) {
-			if (e.getTo().equals(toFind)  && ct.applies(current, stops)) {
+			if (e.getTo().equals(toFind) && ct.applies(current, limit)) {
 				++matches;
-			} else if (!ct.checkEnd(current, stops)) {
-				matches = find(g, e.getTo(), toFind, matches, current + 1, stops, controlType);
+			}
+			if (current < limit) {
+				matches = find(g, e.getTo(), toFind, matches, getCurrent(current, e, accumType), limit, accumType, controlType);
 			}
 		}
 		return matches;
 	}
 
+	private int getCurrent (int current, Edge e, AccumType accumType) {
+		return AccumType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
+	}
+
 	interface MatchControl {
-		boolean checkEnd (int current, int control);
 
 		boolean applies (int current, int control);
 	}
 
-	class ExactMatchControl implements MatchControl {
-
-		@Override
-		public boolean checkEnd (int current, int control) {
-			return current >= control;
-		}
+	class ExactControl implements MatchControl {
 
 		@Override
 		public boolean applies (int current, int control) {
@@ -81,12 +80,7 @@ public class RouteAnalizer {
 		}
 	}
 
-	class AsMuchAsMatchControl implements MatchControl {
-
-		@Override
-		public boolean checkEnd (int current, int control) {
-			return current >= control;
-		}
+	class AsMuchAsControl implements MatchControl {
 
 		@Override
 		public boolean applies (int current, int control) {
@@ -94,18 +88,34 @@ public class RouteAnalizer {
 		}
 	}
 
+	class LessThanControl implements MatchControl {
+
+		@Override
+		public boolean applies (int current, int control) {
+			return current < control - 1;
+		}
+	}
+
 	private MatchControl getCutControl (ControlType ct) {
 		switch (ct) {
 			case AS_MUCH_AS:
-				return new AsMuchAsMatchControl();
+				return new AsMuchAsControl();
+			case LESS_THAN:
+				return new LessThanControl();
 			case EXACT:
 			default:
-				return new ExactMatchControl();
+				return new ExactControl();
 		}
 	}
 
 	public enum ControlType {
 		AS_MUCH_AS,
-		EXACT
+		EXACT,
+		LESS_THAN
+	}
+
+	public enum AccumType {
+		STOPS,
+		LENGTH
 	}
 }

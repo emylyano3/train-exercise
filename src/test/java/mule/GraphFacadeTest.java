@@ -72,7 +72,7 @@ public class GraphFacadeTest {
 	 * are two such trips: C-D-C (2 stops). and C-EB-C (3 stops).
 	 */
 	@Test
-	public void getRouteAlternatives_CC () {
+	public void getRouteAlternatives_CC_STOPS () {
 		assertEquals(2, this.facade.getNumberOfTripsWithMaxStops(graph, graph.getNode("C"), graph.getNode("C"), 3));
 	}
 
@@ -81,7 +81,7 @@ public class GraphFacadeTest {
 	 * three such trips: A to C (via B,C,D); A to C(via D,C,D); and A to C (via D,E,B).
 	 */
 	@Test
-	public void getRouteAlternatives_AC () {
+	public void getRouteAlternatives_AC_STOPS () {
 		assertEquals(3, this.facade.getNumberOfTripsWithStops(graph, graph.getNode("A"), graph.getNode("C"), 4));
 	}
 
@@ -99,5 +99,14 @@ public class GraphFacadeTest {
 	@Test
 	public void getShortestRouteLength_BB () {
 		assertEquals(9, this.facade.getShortestRouteLength(graph, graph.getNode("B"), graph.getNode("B")));
+	}
+
+	/**
+	 * 10. The number of different routes from C to C with a distance of less than 30. In the sample data, the trips
+	 * are: CDC, CEBC, CEBCDC, CDCEBC, CDEBC, CEBCEBC, CEBCEBCEBC.
+	 */
+	@Test
+	public void getRouteAlternatives_CC_WEIGHT () {
+		assertEquals(7, this.facade.getNumberOfTripsWithLength(graph, graph.getNode("C"), graph.getNode("C"), 30));
 	}
 }

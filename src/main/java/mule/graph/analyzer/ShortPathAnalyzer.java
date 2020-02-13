@@ -1,4 +1,4 @@
-package mule.graph.interpreter;
+package mule.graph.analyzer;
 
 import java.util.HashMap;
 import java.util.HashSet;
