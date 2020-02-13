@@ -11,11 +11,11 @@ public class GraphFacade {
 	}
 
 	public int getNumberOfTripsWithMaxStops (IGraph g, Node from, Node to, int maxStops) {
-		return 0;
+		return new RouteAnalizer().getRouteAlternatives(g, from, to, maxStops, RouteAnalizer.ControlType.AS_MUCH_AS);
 	}
 
 	public int getNumberOfTripsWithStops (IGraph g, Node from, Node to, int stops) {
-		return 0;
+		return new RouteAnalizer().getRouteAlternatives(g, from, to, stops, RouteAnalizer.ControlType.EXACT);
 	}
 
 	public int getShortestRouteLength (IGraph g, Node from, Node to) {

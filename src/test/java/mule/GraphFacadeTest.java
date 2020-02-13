@@ -68,6 +68,24 @@ public class GraphFacadeTest {
 	}
 
 	/**
+	 * 6. The number of trips starting at C and ending at C with a maximum of 3 stops. In the sample data below, there
+	 * are two such trips: C-D-C (2 stops). and C-EB-C (3 stops).
+	 */
+	@Test
+	public void getRouteAlternatives_CC () {
+		assertEquals(2, this.facade.getNumberOfTripsWithMaxStops(graph, graph.getNode("C"), graph.getNode("C"), 3));
+	}
+
+	/**
+	 * 7. The number of trips starting at A and ending at C with exactly 4 stops. In the sample data below, there are
+	 * three such trips: A to C (via B,C,D); A to C(via D,C,D); and A to C (via D,E,B).
+	 */
+	@Test
+	public void getRouteAlternatives_AC () {
+		assertEquals(3, this.facade.getNumberOfTripsWithStops(graph, graph.getNode("A"), graph.getNode("C"), 4));
+	}
+
+	/**
 	 * 8. The length of the shortest route (in terms of distance to travel) from A to C.
 	 */
 	@Test

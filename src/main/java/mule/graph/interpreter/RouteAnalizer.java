@@ -45,4 +45,67 @@ public class RouteAnalizer {
 			this.matrix.get(e.getFrom()).put(e.getTo(), e.getWeigth());
 		}
 	}
+
+	public int getRouteAlternatives (IGraph g, Node from, Node to, int cutControl, ControlType controlType) {
+		return find(g, from, to, 0, 0, cutControl, controlType);
+	}
+
+	private int find (IGraph g, Node n, Node toFind, int matches, int current, int stops, ControlType controlType) {
+		MatchControl ct = getCutControl(controlType);
+		for (Edge e : g.getEdges(n)) {
+			if (e.getTo().equals(toFind)  && ct.applies(current, stops)) {
+				++matches;
+			} else if (!ct.checkEnd(current, stops)) {
+				matches = find(g, e.getTo(), toFind, matches, current + 1, stops, controlType);
+			}
+		}
+		return matches;
+	}
+
+	interface MatchControl {
+		boolean checkEnd (int current, int control);
+
+		boolean applies (int current, int control);
+	}
+
+	class ExactMatchControl implements MatchControl {
+
+		@Override
+		public boolean checkEnd (int current, int control) {
+			return current >= control;
+		}
+
+		@Override
+		public boolean applies (int current, int control) {
+			return current == control - 1;
+		}
+	}
+
+	class AsMuchAsMatchControl implements MatchControl {
+
+		@Override
+		public boolean checkEnd (int current, int control) {
+			return current >= control;
+		}
+
+		@Override
+		public boolean applies (int current, int control) {
+			return current < control;
+		}
+	}
+
+	private MatchControl getCutControl (ControlType ct) {
+		switch (ct) {
+			case AS_MUCH_AS:
+				return new AsMuchAsMatchControl();
+			case EXACT:
+			default:
+				return new ExactMatchControl();
+		}
+	}
+
+	public enum ControlType {
+		AS_MUCH_AS,
+		EXACT
+	}
 }
