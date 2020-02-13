@@ -51,12 +51,12 @@ public class RouteAnalyzer {
 	}
 
 	private int find (IGraph g, Node n, Node toFind, int matches, int current, int limit, AccumType accumType, ControlType controlType) {
-		MatchControl ct = getCutControl(controlType);
-		for (Edge e : g.getEdges(n)) {
-			if (e.getTo().equals(toFind) && ct.applies(current, limit)) {
-				++matches;
-			}
-			if (current < limit) {
+		CutControl ct = getCutControl(controlType);
+		if (current <= limit) {
+			for (Edge e : g.getEdges(n)) {
+				if (e.getTo().equals(toFind) && ct.satysfiesCondition(e, current, limit)) {
+					++matches;
+				}
 				matches = find(g, e.getTo(), toFind, matches, getCurrent(current, e, accumType), limit, accumType, controlType);
 			}
 		}
@@ -67,36 +67,36 @@ public class RouteAnalyzer {
 		return AccumType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
 	}
 
-	interface MatchControl {
+	interface CutControl {
 
-		boolean applies (int current, int control);
+		boolean satysfiesCondition (Edge e, int current, int control);
 	}
 
-	class ExactControl implements MatchControl {
+	class ExactControl implements CutControl {
 
 		@Override
-		public boolean applies (int current, int control) {
+		public boolean satysfiesCondition (Edge e, int current, int control) {
 			return current == control - 1;
 		}
 	}
 
-	class AsMuchAsControl implements MatchControl {
+	class AsMuchAsControl implements CutControl {
 
 		@Override
-		public boolean applies (int current, int control) {
+		public boolean satysfiesCondition (Edge e, int current, int control) {
 			return current < control;
 		}
 	}
 
-	class LessThanControl implements MatchControl {
+	class LessThanControl implements CutControl {
 
 		@Override
-		public boolean applies (int current, int control) {
-			return current < control - 1;
+		public boolean satysfiesCondition (Edge e, int current, int control) {
+			return current + e.getWeigth() < control;
 		}
 	}
 
-	private MatchControl getCutControl (ControlType ct) {
+	private CutControl getCutControl (ControlType ct) {
 		switch (ct) {
 			case AS_MUCH_AS:
 				return new AsMuchAsControl();
