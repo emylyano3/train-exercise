@@ -3,6 +3,7 @@ package mule.graph.analyzer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import mule.graph.exception.NoSuchRouteException;
@@ -48,29 +49,36 @@ public class RouteAnalyzer {
 		}
 	}
 
-	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, CounterType accumType, Predicate<Control> control) {
-		return find(g, from, to, 0, 0, limit, accumType, control);
+	/**
+	 * Calculates how many different alternatives exists to go from one node no another inside a graph in a certain
+	 * number of steps.
+	 *
+	 * @param limit
+	 *            The number of steps
+	 * @param odometer
+	 *            The function to calculate the trip length.
+	 * @param control
+	 *            Evaluates the condition in which the route is valid.
+	 */
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
+		return find(g, from, to, 0, 0, limit, odometer, control);
 	}
 
-	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, CounterType accumType, Predicate<Control> control) {
-		if (current <= limit) {
+	private int find (IGraph g, INode n, INode toFind, int matches, int step, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
+		if (step <= limit) {
 			for (Edge e : g.getEdges(n)) {
-				if (e.getTo().equals(toFind) && control.test(new Control(e, current, limit))) {
+				if (e.getTo().equals(toFind) && control.test(new Control(e, step, limit))) {
 					++matches;
 				}
-				matches = find(g, e.getTo(), toFind, matches, getCurrent(current, e, accumType), limit, accumType, control);
+				matches = find(g, e.getTo(), toFind, matches, odometer.apply(new Control(e, step, limit)), limit, odometer, control);
 			}
 		}
 		return matches;
 	}
 
-	private int getCurrent (int current, Edge e, CounterType accumType) {
-		return CounterType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
-	}
-
 	public static class Control {
 		private Edge	edge;
-		private int		current;
+		private int		step;
 		private int		limit;
 
 		public Edge getEdge () {
@@ -81,12 +89,12 @@ public class RouteAnalyzer {
 			this.edge = edge;
 		}
 
-		public int getCurrent () {
-			return this.current;
+		public int getStep () {
+			return this.step;
 		}
 
-		public void setCurrent (int current) {
-			this.current = current;
+		public void setStep (int step) {
+			this.step = step;
 		}
 
 		public int getLimit () {
@@ -97,22 +105,11 @@ public class RouteAnalyzer {
 			this.limit = limit;
 		}
 
-		public Control (Edge e, int current, int limit) {
+		public Control (Edge e, int step, int limit) {
 			super();
 			this.edge = e;
-			this.current = current;
+			this.step = step;
 			this.limit = limit;
 		}
-	}
-
-	public enum ControlType {
-		AS_MUCH_AS,
-		EXACT,
-		LESS_THAN
-	}
-
-	public enum CounterType {
-		STOPS,
-		LENGTH
 	}
 }

@@ -5,6 +5,9 @@ import mule.graph.model.INode;
 
 public interface IGraphFacade {
 
+	/**
+	 * Returns the distance of a route that is conformed by a series of nodes
+	 */
 	int getRouteDistance (IGraph g, INode... route);
 
 	/**
