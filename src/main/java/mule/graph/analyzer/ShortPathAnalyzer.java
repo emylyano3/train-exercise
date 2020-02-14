@@ -11,11 +11,16 @@ import mule.graph.model.INode;
 
 public class ShortPathAnalyzer {
 
-	private static final int INFINIT_LENGTH = -1;
-	// Usaremos un vector para guardar las distancias del nodo salida al resto
-	private Map<INode, Integer>	distances	= new HashMap<>();
-	// vector de boleanos para controlar los vértices de los que ya tenemos la distancia mínima
-	private Set<INode>			checked		= new HashSet<>();
+	private static final int	INFINIT_LENGTH	= -1;
+
+	/**
+	 * Use a map to keep track of distances from the source to the rest of nodes
+	 */
+	private Map<INode, Integer>	distances		= new HashMap<>();
+	/**
+	 * Set to keep track of nodes that have been already relieved
+	 */
+	private Set<INode>			checked			= new HashSet<>();
 
 	public ShortPathAnalyzer compile (IGraph g, INode source) {
 		for (INode node : g.getNodes()) {
@@ -57,7 +62,7 @@ public class ShortPathAnalyzer {
 	}
 
 	/**
-	 * @returns the first node from the distance check map that has not been checked
+	 * @returns the first node from the distance check map that has not been relieved
 	 */
 	private INode getNextNode () {
 		for (INode n : this.distances.keySet()) {
