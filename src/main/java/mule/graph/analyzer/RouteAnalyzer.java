@@ -3,6 +3,7 @@ package mule.graph.analyzer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import mule.graph.exception.NoSuchRouteException;
 import mule.graph.model.Edge;
@@ -47,18 +48,17 @@ public class RouteAnalyzer {
 		}
 	}
 
-	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, CounterType accumType, ControlType controlType) {
-		return find(g, from, to, 0, 0, limit, accumType, controlType);
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, CounterType accumType, Predicate<Control> control) {
+		return find(g, from, to, 0, 0, limit, accumType, control);
 	}
 
-	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, CounterType accumType, ControlType controlType) {
-		CutControl ct = getCutControl(controlType);
+	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, CounterType accumType, Predicate<Control> control) {
 		if (current <= limit) {
 			for (Edge e : g.getEdges(n)) {
-				if (e.getTo().equals(toFind) && ct.satysfiesCondition(e, current, limit)) {
+				if (e.getTo().equals(toFind) && control.test(new Control(e, current, limit))) {
 					++matches;
 				}
-				matches = find(g, e.getTo(), toFind, matches, getCurrent(current, e, accumType), limit, accumType, controlType);
+				matches = find(g, e.getTo(), toFind, matches, getCurrent(current, e, accumType), limit, accumType, control);
 			}
 		}
 		return matches;
@@ -68,43 +68,40 @@ public class RouteAnalyzer {
 		return CounterType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
 	}
 
-	interface CutControl {
-		boolean satysfiesCondition (Edge e, int current, int control);
-	}
+	public static class Control {
+		private Edge	edge;
+		private int		current;
+		private int		limit;
 
-	class ExactControl implements CutControl {
-
-		@Override
-		public boolean satysfiesCondition (Edge e, int current, int control) {
-			return current == control - 1;
+		public Edge getEdge () {
+			return this.edge;
 		}
-	}
 
-	class AsMuchAsControl implements CutControl {
-
-		@Override
-		public boolean satysfiesCondition (Edge e, int current, int control) {
-			return current < control;
+		public void setEdge (Edge edge) {
+			this.edge = edge;
 		}
-	}
 
-	class LessThanControl implements CutControl {
-
-		@Override
-		public boolean satysfiesCondition (Edge e, int current, int control) {
-			return current + e.getWeigth() < control;
+		public int getCurrent () {
+			return this.current;
 		}
-	}
 
-	private CutControl getCutControl (ControlType ct) {
-		switch (ct) {
-			case AS_MUCH_AS:
-				return new AsMuchAsControl();
-			case LESS_THAN:
-				return new LessThanControl();
-			case EXACT:
-			default:
-				return new ExactControl();
+		public void setCurrent (int current) {
+			this.current = current;
+		}
+
+		public int getLimit () {
+			return this.limit;
+		}
+
+		public void setLimit (int limit) {
+			this.limit = limit;
+		}
+
+		public Control (Edge e, int current, int limit) {
+			super();
+			this.edge = e;
+			this.current = current;
+			this.limit = limit;
 		}
 	}
 

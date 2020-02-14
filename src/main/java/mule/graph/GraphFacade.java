@@ -5,7 +5,7 @@ import mule.graph.analyzer.ShortPathAnalyzer;
 import mule.graph.model.IGraph;
 import mule.graph.model.INode;
 
-public class GraphFacade  implements IGraphFacade {
+public class GraphFacade implements IGraphFacade {
 
 	@Override
 	public int getRouteDistance (IGraph g, INode... route) {
@@ -14,17 +14,18 @@ public class GraphFacade  implements IGraphFacade {
 
 	@Override
 	public int getNumberOfTripsWithMaxStops (IGraph g, INode from, INode to, int maxStops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, maxStops, RouteAnalyzer.CounterType.STOPS, RouteAnalyzer.ControlType.AS_MUCH_AS);
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, maxStops, RouteAnalyzer.CounterType.STOPS, (c) -> c.getCurrent() < c.getLimit());
 	}
 
 	@Override
 	public int getNumberOfTripsWithStops (IGraph g, INode from, INode to, int stops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, stops, RouteAnalyzer.CounterType.STOPS, RouteAnalyzer.ControlType.EXACT);
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, stops, RouteAnalyzer.CounterType.STOPS, (c) -> c.getCurrent() == c.getLimit() - 1);
 	}
 
 	@Override
 	public int getNumberOfTripsWithLength (IGraph g, INode from, INode to, int length) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, length, RouteAnalyzer.CounterType.LENGTH, RouteAnalyzer.ControlType.LESS_THAN);
+		return new RouteAnalyzer()
+			.getRouteAlternatives(g, from, to, length, RouteAnalyzer.CounterType.LENGTH, (c) -> c.getCurrent() + c.getEdge().getWeigth() < c.getLimit());
 	}
 
 	@Override
