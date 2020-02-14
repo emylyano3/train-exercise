@@ -8,13 +8,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import mule.graph.GraphFacade;
+import mule.graph.IGraphFacade;
 import mule.graph.exception.NoSuchRouteException;
 import mule.graph.loader.GraphLoader;
 import mule.graph.model.IGraph;
 
 public class GraphFacadeTest {
 
-	private GraphFacade		facade	= new GraphFacade();
+	private IGraphFacade	facade	= new GraphFacade();
 	private static IGraph	graph;
 
 	@BeforeClass
@@ -90,7 +91,7 @@ public class GraphFacadeTest {
 	 */
 	@Test
 	public void getShortestRouteLength_AC () {
-		assertEquals(9, this.facade.getShortestRouteLength(graph, graph.getNode("A"), graph.getNode("C")));
+		assertEquals(9, this.facade.getShortestRoute(graph, graph.getNode("A"), graph.getNode("C")));
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class GraphFacadeTest {
 	 */
 	@Test
 	public void getShortestRouteLength_BB () {
-		assertEquals(9, this.facade.getShortestRouteLength(graph, graph.getNode("B"), graph.getNode("B")));
+		assertEquals(9, this.facade.getShortestRoute(graph, graph.getNode("B"), graph.getNode("B")));
 	}
 
 	/**

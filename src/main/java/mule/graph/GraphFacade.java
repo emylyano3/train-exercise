@@ -5,36 +5,30 @@ import mule.graph.analyzer.ShortPathAnalyzer;
 import mule.graph.model.IGraph;
 import mule.graph.model.INode;
 
-public class GraphFacade {
+public class GraphFacade  implements IGraphFacade {
+
+	@Override
 	public int getRouteDistance (IGraph g, INode... route) {
 		return new RouteAnalyzer().compile(g).getRouteDistance(route);
 	}
 
-	/**
-	 * Returns the # of possible trips between two nodes with a number of stops that is less or equals to the max stops
-	 * specified.
-	 */
+	@Override
 	public int getNumberOfTripsWithMaxStops (IGraph g, INode from, INode to, int maxStops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, maxStops, RouteAnalyzer.AccumType.STOPS, RouteAnalyzer.ControlType.AS_MUCH_AS);
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, maxStops, RouteAnalyzer.CounterType.STOPS, RouteAnalyzer.ControlType.AS_MUCH_AS);
 	}
 
-	/**
-	 * Returns the # of possible trips between two nodes with a number of stops that is equals to the stops specified.
-	 */
+	@Override
 	public int getNumberOfTripsWithStops (IGraph g, INode from, INode to, int stops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, stops, RouteAnalyzer.AccumType.STOPS, RouteAnalyzer.ControlType.EXACT);
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, stops, RouteAnalyzer.CounterType.STOPS, RouteAnalyzer.ControlType.EXACT);
 	}
 
-	/**
-	 * Returns the # of possible trips between two nodes with a weight (length) that is less than the length specified.
-	 */
+	@Override
 	public int getNumberOfTripsWithLength (IGraph g, INode from, INode to, int length) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, length, RouteAnalyzer.AccumType.LENGTH, RouteAnalyzer.ControlType.LESS_THAN);
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, length, RouteAnalyzer.CounterType.LENGTH, RouteAnalyzer.ControlType.LESS_THAN);
 	}
 
-	public int getShortestRouteLength (IGraph g, INode from, INode to) {
-		ShortPathAnalyzer ga = new ShortPathAnalyzer();
-		ga.compile(g, from);
-		return ga.getDistancesTo(to);
+	@Override
+	public int getShortestRoute (IGraph g, INode from, INode to) {
+		return new ShortPathAnalyzer().compile(g, from).getDistancesTo(to);
 	}
 }

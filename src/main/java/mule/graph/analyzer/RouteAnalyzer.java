@@ -47,11 +47,11 @@ public class RouteAnalyzer {
 		}
 	}
 
-	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, AccumType accumType, ControlType controlType) {
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, CounterType accumType, ControlType controlType) {
 		return find(g, from, to, 0, 0, limit, accumType, controlType);
 	}
 
-	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, AccumType accumType, ControlType controlType) {
+	private int find (IGraph g, INode n, INode toFind, int matches, int current, int limit, CounterType accumType, ControlType controlType) {
 		CutControl ct = getCutControl(controlType);
 		if (current <= limit) {
 			for (Edge e : g.getEdges(n)) {
@@ -64,12 +64,11 @@ public class RouteAnalyzer {
 		return matches;
 	}
 
-	private int getCurrent (int current, Edge e, AccumType accumType) {
-		return AccumType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
+	private int getCurrent (int current, Edge e, CounterType accumType) {
+		return CounterType.STOPS.equals(accumType) ? current + 1 : current + e.getWeigth();
 	}
 
 	interface CutControl {
-
 		boolean satysfiesCondition (Edge e, int current, int control);
 	}
 
@@ -115,7 +114,7 @@ public class RouteAnalyzer {
 		LESS_THAN
 	}
 
-	public enum AccumType {
+	public enum CounterType {
 		STOPS,
 		LENGTH
 	}
