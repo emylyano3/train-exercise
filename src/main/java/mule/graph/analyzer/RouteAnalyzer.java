@@ -50,27 +50,27 @@ public class RouteAnalyzer {
 	}
 
 	/**
-	 * Calculates how many different alternatives exists to go from one node no another inside a graph in a certain
+	 * Calculates how many different alternatives exist to go from one node no another inside a graph in a certain
 	 * number of steps.
 	 *
 	 * @param limit
 	 *            The number of steps
 	 * @param odometer
 	 *            The function to calculate the trip length.
-	 * @param control
+	 * @param match
 	 *            Evaluates the condition in which the route is valid.
 	 */
-	public int getRouteAlternatives (IGraph g, INode from, INode to, int startAt, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
-		return find(g, from, to, 0, startAt, limit, odometer, control);
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int startAt, int limit, Function<Control, Integer> odometer, Predicate<Control> match) {
+		return find(g, from, to, 0, startAt, limit, odometer, match);
 	}
 
-	private int find (IGraph g, INode n, INode toFind, int matches, int length, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
+	private int find (IGraph g, INode n, INode toFind, int matches, int length, int limit, Function<Control, Integer> odometer, Predicate<Control> match) {
 		if (length <= limit) {
 			for (Edge e : g.getEdges(n)) {
-				if (e.getTo().equals(toFind) && control.test(new Control(e, length, limit))) {
+				if (e.getTo().equals(toFind) && match.test(new Control(e, length, limit))) {
 					++matches;
 				}
-				matches = find(g, e.getTo(), toFind, matches, odometer.apply(new Control(e, length, limit)), limit, odometer, control);
+				matches = find(g, e.getTo(), toFind, matches, odometer.apply(new Control(e, length, limit)), limit, odometer, match);
 			}
 		}
 		return matches;
