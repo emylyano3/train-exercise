@@ -14,12 +14,12 @@ public class GraphFacade implements IGraphFacade {
 
 	@Override
 	public int getNumberOfTripsWithMaxStops (IGraph g, INode from, INode to, int maxStops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, 1, maxStops, (c) -> c.getStep() + 1, (c) -> c.getStep() <= c.getLimit());
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, 1, maxStops, (c) -> c.getTripLength() + 1, (c) -> c.getTripLength() <= c.getLimit());
 	}
 
 	@Override
 	public int getNumberOfTripsWithStops (IGraph g, INode from, INode to, int stops) {
-		return new RouteAnalyzer().getRouteAlternatives(g, from, to, 1, stops, (c) -> c.getStep() + 1, (c) -> c.getStep() == c.getLimit());
+		return new RouteAnalyzer().getRouteAlternatives(g, from, to, 1, stops, (c) -> c.getTripLength() + 1, (c) -> c.getTripLength() == c.getLimit());
 	}
 
 	@Override
@@ -30,8 +30,8 @@ public class GraphFacade implements IGraphFacade {
 				to,
 				0,
 				length,
-				(c) -> c.getStep() + c.getEdge().getWeigth(),
-				(c) -> c.getStep() + c.getEdge().getWeigth() < c.getLimit());
+				(c) -> c.getTripLength() + c.getEdge().getWeigth(),
+				(c) -> c.getTripLength() + c.getEdge().getWeigth() < c.getLimit());
 	}
 
 	@Override

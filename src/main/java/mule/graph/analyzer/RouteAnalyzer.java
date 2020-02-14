@@ -64,51 +64,39 @@ public class RouteAnalyzer {
 		return find(g, from, to, 0, startAt, limit, odometer, control);
 	}
 
-	private int find (IGraph g, INode n, INode toFind, int matches, int step, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
-		if (step <= limit) {
+	private int find (IGraph g, INode n, INode toFind, int matches, int length, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
+		if (length <= limit) {
 			for (Edge e : g.getEdges(n)) {
-				if (e.getTo().equals(toFind) && control.test(new Control(e, step, limit))) {
+				if (e.getTo().equals(toFind) && control.test(new Control(e, length, limit))) {
 					++matches;
 				}
-				matches = find(g, e.getTo(), toFind, matches, odometer.apply(new Control(e, step, limit)), limit, odometer, control);
+				matches = find(g, e.getTo(), toFind, matches, odometer.apply(new Control(e, length, limit)), limit, odometer, control);
 			}
 		}
 		return matches;
 	}
 
 	public static class Control {
-		private Edge	edge;
-		private int		step;
-		private int		limit;
+		private final Edge	edge;
+		private final int	tripLength;
+		private final int	limit;
 
 		public Edge getEdge () {
 			return this.edge;
 		}
 
-		public void setEdge (Edge edge) {
-			this.edge = edge;
-		}
-
-		public int getStep () {
-			return this.step;
-		}
-
-		public void setStep (int step) {
-			this.step = step;
+		public int getTripLength () {
+			return this.tripLength;
 		}
 
 		public int getLimit () {
 			return this.limit;
 		}
 
-		public void setLimit (int limit) {
-			this.limit = limit;
-		}
-
-		public Control (Edge e, int step, int limit) {
+		public Control (Edge e, int tripLength, int limit) {
 			super();
 			this.edge = e;
-			this.step = step;
+			this.tripLength = tripLength;
 			this.limit = limit;
 		}
 	}

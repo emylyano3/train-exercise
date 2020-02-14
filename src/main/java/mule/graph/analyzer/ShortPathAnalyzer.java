@@ -11,6 +11,7 @@ import mule.graph.model.INode;
 
 public class ShortPathAnalyzer {
 
+	private static final int INFINIT_LENGTH = -1;
 	// Usaremos un vector para guardar las distancias del nodo salida al resto
 	private Map<INode, Integer>	distances	= new HashMap<>();
 	// vector de boleanos para controlar los vértices de los que ya tenemos la distancia mínima
@@ -22,7 +23,7 @@ public class ShortPathAnalyzer {
 			if ((r = getNodesRelation(g, source, node)) != null) {
 				this.distances.put(node, r.getWeigth());
 			} else {
-				this.distances.put(node, -1);
+				this.distances.put(node, INFINIT_LENGTH);
 			}
 		}
 		this.checked.add(source);
@@ -37,9 +38,9 @@ public class ShortPathAnalyzer {
 	}
 
 	private int getShortestDistance (Edge e) {
-		if (this.distances.get(e.getTo()) == -1 && this.distances.get(e.getFrom()) == -1) {
-			return -1;
-		} else if (this.distances.get(e.getTo()) == -1) {
+		if (this.distances.get(e.getTo()) == INFINIT_LENGTH && this.distances.get(e.getFrom()) == INFINIT_LENGTH) {
+			return INFINIT_LENGTH;
+		} else if (this.distances.get(e.getTo()) == INFINIT_LENGTH) {
 			return this.distances.get(e.getFrom()) + e.getWeigth();
 		} else {
 			return this.distances.get(e.getTo());
@@ -72,7 +73,7 @@ public class ShortPathAnalyzer {
 	}
 
 	public Integer getDistancesTo (INode n) {
-		return this.distances.get(n) != null ? this.distances.get(n) : -1;
+		return this.distances.get(n) != null ? this.distances.get(n) : INFINIT_LENGTH;
 	}
 
 }
