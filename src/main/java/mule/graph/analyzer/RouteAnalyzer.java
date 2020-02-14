@@ -60,8 +60,8 @@ public class RouteAnalyzer {
 	 * @param control
 	 *            Evaluates the condition in which the route is valid.
 	 */
-	public int getRouteAlternatives (IGraph g, INode from, INode to, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
-		return find(g, from, to, 0, 0, limit, odometer, control);
+	public int getRouteAlternatives (IGraph g, INode from, INode to, int startAt, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
+		return find(g, from, to, 0, startAt, limit, odometer, control);
 	}
 
 	private int find (IGraph g, INode n, INode toFind, int matches, int step, int limit, Function<Control, Integer> odometer, Predicate<Control> control) {
