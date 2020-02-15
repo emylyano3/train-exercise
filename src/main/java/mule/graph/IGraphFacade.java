@@ -1,12 +1,15 @@
 package mule.graph;
 
+import mule.graph.exception.NoSuchRouteException;
 import mule.graph.model.IGraph;
 import mule.graph.model.INode;
 
 public interface IGraphFacade {
 
 	/**
-	 * Returns the distance of a route that is conformed by a series of nodes
+	 * Returns the distance of a route that is conformed by a series of nodes.
+	 *
+	 * @throws NoSuchRouteException
 	 */
 	int getRouteDistance (IGraph g, INode... route);
 

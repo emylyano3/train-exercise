@@ -21,6 +21,9 @@ public class RouteAnalyzer {
 		return this;
 	}
 
+	/**
+	 * @throws NoSuchRouteException
+	 */
 	public int getRouteDistance (INode... route) {
 		int distance = 0;
 		for (int i = 0; i < route.length - 1; ++i) {
